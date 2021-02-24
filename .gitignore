@@ -1,52 +1,41 @@
-# Prerequisites
-*.d
+*.class
+*.log
+*.bak
 
-# Object files
-*.o
-*.ko
-*.obj
-*.elf
+# sbt specific
+.cache/
+.history/
+.lib/
+dist/*
+target
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
 
-# Linker output
-*.ilk
-*.map
-*.exp
+# Scala-IDE specific
+.scala_dependencies
+.worksheet
 
-# Precompiled Headers
-*.gch
-*.pch
+.idea
+out
 
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
+# Eclipse
+bin/
+.classpath
+.project
+.settings
+.cache-main
 
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
+#User
+/*.vhd
+/*.v
+*.cf
+*.json
+*.vcd
+!tester/src/test/resources/*.vhd
 
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
 
-# Debug files
-*.dSYM/
-*.su
-*.idb
-*.pdb
-
-# Kernel Module Compile Results
-*.mod*
-*.cmd
-.tmp_versions/
-modules.order
-Module.symvers
-Mkfile.old
-dkms.conf
+simWorkspace/
+tmp/
+null
