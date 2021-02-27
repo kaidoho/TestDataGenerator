@@ -3,47 +3,61 @@ package tdg
 import spinal.core._
 import spinal.lib._
 
-import scala.util.Random
+
+
+
 
 //Hardware definition
-class MyTopLevel extends Component {
-  val io = new Bundle {
-    val cond0 = in  Bool
-    val cond1 = in  Bool
-    val flag  = out Bool
-    val state = out UInt(8 bits)
-  }
-  val counter = Reg(UInt(8 bits)) init(0)
+class TopTdg (cols: Int, rows: Int) extends Component {
 
-  when(io.cond0){
-    counter := counter + 1
-  }
 
-  io.state := counter
-  io.flag  := (counter === 0) | io.cond1
-}
+  val m_axis = master(Axi4Stream(Axi4StreamConfig(32)))
 
-//Generate the MyTopLevel's Verilog
-object MyTopLevelVerilog {
-  def main(args: Array[String]) {
-    SpinalVerilog(new MyTopLevel)
-  }
-}
+  val ft = new tdg_frame_trigger(32 bits)
+  val fr = new tdg_frame_controller(cols, rows)
 
-//Generate the MyTopLevel's VHDL
-object MyTopLevelVhdl {
-  def main(args: Array[String]) {
-    SpinalVhdl(new MyTopLevel)
-  }
+
+  val fps_i   =  in cloneOf(ft.fps_i)
+  val enable_i =  in cloneOf(ft.enable_i)
+
+  ft.fps_i   := fps_i
+  ft.enable_i := enable_i
+
+  fr.start_frame_i := ft.start_frame_o
+  fr.enable_i := enable_i
+
+
+
+  m_axis.tdata := fr.m_axis.tdata
+  m_axis.tvalid := fr.m_axis.tvalid
+  m_axis.tlast := fr.m_axis.tlast
+  fr.m_axis.tready := m_axis.tready
+
 }
 
 
 //Define a custom SpinalHDL configuration with synchronous reset instead of the default asynchronous one. This configuration can be resued everywhere
-object MySpinalConfig extends SpinalConfig(defaultConfigForClockDomains = ClockDomainConfig(resetKind = SYNC))
+object MySpinalConfig extends SpinalConfig(defaultConfigForClockDomains = ClockDomainConfig(resetKind = SYNC, resetActiveLevel=LOW))
+
+//Generate the MyTopLevel's VHDL
+object MyTopLevelVhdl {
+  def main(args: Array[String]) {
+
+    def telgram = new Ibeo_MessageContent_F0(192,3)
+
+    telgram.get_size_in_bits()
+
+    //SpinalVhdl(new MyTopLevel)
+    //MySpinalConfig.generateVhdl(new TopTdg(192 ,80))
+    MySpinalConfig.generateVerilog(new TopTdg(192 ,80))
+  }
+}
+
+
 
 //Generate the MyTopLevel's Verilog using the above custom configuration.
 object MyTopLevelVerilogWithCustomConfig {
   def main(args: Array[String]) {
-    MySpinalConfig.generateVerilog(new MyTopLevel)
+    MySpinalConfig.generateVerilog(new TopTdg(192,80))
   }
 }
