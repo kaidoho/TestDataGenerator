@@ -28,11 +28,10 @@ class tdg_frame_trigger(cnt_size: BitCount) extends Component {
     sig_trigger := False
     sig_wrap_around := fps_i
   } otherwise {
-    if (sig_cnt == sig_wrap_around) {
+    when (sig_cnt === sig_wrap_around) {
       sig_cnt := 0
       sig_trigger := !sig_trigger
-    }
-    else {
+    } otherwise {
       sig_cnt := (sig_cnt + 1)
     }
   }

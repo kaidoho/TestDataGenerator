@@ -11,7 +11,7 @@ case class tdg_frame_storage(Columns: Int, rows: Int, PointsPerVector: Int) exte
   //val mem = Mem(Bits(32 bits), wordCount = wordCount)
 
   val wordCount = 8
-  val mem = Mem(Bits(32 bits), wordCount = wordCount) init(Seq(0,1,2,3,4,5,6,7))
+  val mem = Mem(Bits(32 bits), wordCount = wordCount) init(Seq(9,5,4,3,4,5,6,7))
 
   val start_transmit_i = in Bool
   val transmit_done_o = out Bool
@@ -59,7 +59,7 @@ case class tdg_frame_storage(Columns: Int, rows: Int, PointsPerVector: Int) exte
         when(m_axis.tready && start_transmit_i) {
           sig_word_counter := sig_word_counter + 1
           sig_read_data:= mem.readSync(sig_word_counter)
-          if (sig_word_counter == sig_word_stop) {
+          when (sig_word_counter === sig_word_stop) {
             goto(transferLast)
           }
         }
@@ -75,6 +75,7 @@ case class tdg_frame_storage(Columns: Int, rows: Int, PointsPerVector: Int) exte
       }
     signalDone
       .whenIsActive {
+        sig_read_valid := False
         sig_read_tlast := False
         sig_transmit_done := True
         goto(idle)

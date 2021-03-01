@@ -43,7 +43,7 @@ object MySpinalConfig extends SpinalConfig(defaultConfigForClockDomains = ClockD
 object MyTopLevelVhdl {
   def main(args: Array[String]) {
 
-    def telgram = new Ibeo_MessageContent_F0(192,3)
+    def telgram = new FrontEnd_MessageContent_F0(192,3)
 
     telgram.get_size_in_bits()
 
